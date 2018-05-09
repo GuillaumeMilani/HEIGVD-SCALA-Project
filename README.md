@@ -6,4 +6,4 @@ In addition to divert people using a funny game, this project will allow the adm
 
 ## Database schema
 
-![UML](documentation/uml.png)
+![UML](UML/uml.png)
