@@ -3,10 +3,9 @@
 Guillaume Milani, Edward Ransome, Michaël Spierer
 
 ## Description
-This project is part of the SCALA course at HEIG-VD, Yverdon-les-Bains. It consists in a clicker, i.e. a game whose goal is to have as many resources as possible. In order to satisfy the latter, the player has several choices: click in a certain area to have a number of resource units, buy resources generators with resource to which create resources every second or buy bonuses to improve the two previous choices. There is a fourth way which consists in obtaining a boost of resource during a certain time and which will be unlocked by succeeding in an image recognition problem.
+This project is part of the SCALA course at HEIG-VD, Yverdon-les-Bains. It consists of a Clicker game, i.e. a game whose goal is to earn as many points as possible mainly by clicking. In order to satisfy the latter, the player has several choices: click in a certain area to gain points, buy point generators with the user's current points which create more every second or buy bonuses to improve the two previous choices. The fourth way is to perform an image classification problem to earn a large point bonus. This will allow an administrator to use the game to collect information about an image set.
 
-In addition to divert people using a funny game, this project will allow the administrator to collect information about the images the players clicked to unlock bonuses.
-
+An administrator will have to provide two image sets: a classified image set, with corresponding keywords for each image, and the unclassified set they wish to collect data about. In order to reward users for correctly classifying images, we use the known image set. This discourages users from randomly selecting keywords for the unclassified set, by rewarding them when we know they are correct.
 ## Database schema
 
 ![UML](UML/uml.png)
