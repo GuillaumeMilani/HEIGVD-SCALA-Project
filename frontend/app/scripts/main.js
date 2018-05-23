@@ -6,16 +6,18 @@ document.getElementById('getNewPuzzle').addEventListener('click', getNewPuzzle);
 /**
  * Javascript array shuffle function, source:
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
- * Randomize array element order in-place.
- * Using Durstenfeld shuffle algorithm.
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
  */
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
     }
+    return a;
 }
 
 function getNewPuzzle() {
@@ -33,12 +35,12 @@ function getNewPuzzle() {
     for (var i = 0; i < x*y; ++i){
         image_id_array.push(i);
     }
-    shuffleArray(image_id_array);
+    shuffle(image_id_array);
     
     var result = '';
     for(var i = 0; i < x; ++i){
         for(var j = 0; j < y; ++j){
-            result += ' <img src="images/'+ (i*x+j) +'.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
+            result += ' <img src="images/'+ image_id_array[i*x+j] +'.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
         }
         result += '<br>'
     }
