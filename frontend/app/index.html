@@ -1,61 +1,89 @@
 <!doctype html>
 <html lang="">
-  <head>
-    <style>
-      
-    </style>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SCALA Image Classification</title>
 
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
+<head>
+  <style>
+    .imageBox {
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
 
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <!-- endbower -->
-    <!-- endbuild -->
+    .notClicked {
+      border:5px;
+      border-color:red;
+    }
 
-    <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
-    
-  </head>
-  <body>
-    <!--[if IE]>
+    .clicked {
+      border:5px;
+      border-color: green;
+    }
+
+
+  </style>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SCALA Image Classification</title>
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+
+</head>
+
+<body>
+  <!--[if IE]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <header>
-      <nav>
-        <p>User info</p>
-      </nav>
-    </header>
-      
-    <div class="hero-unit">
-      <h1>Image classifier</h1>
-      <p>Select grid dimensions:</p>
-      <ul>
-        <li>Width: <input type="number" id="boxWidth" value="6"></li>
-        <li>Height: <input type="number" id="boxHeight" value="6"></li>
-        <li> <input id="getNewPuzzle" type="submit" value="Show me a puzzle!"></li>
-        <canvas id="imageBox" width="0" height="0"></canvas>
-      </ul>
-    </div>
+  <header>
+    <nav>
+      <p>User info</p>
+    </nav>
+  </header>
 
-    <footer>
-      <p>Built at HEIG-VD for 2018 SCALA course</p>
-    </footer>
+  <div class="hero-unit">
+    <h1>Image classifier</h1>
+    <p>Select grid dimensions:</p>
+    <ul>
+      <li>Width:
+        <input type="number" id="boxWidth" value="6">
+      </li>
+      <li>Height:
+        <input type="number" id="boxHeight" value="6">
+      </li>
+      <li>
+        <input id="getNewPuzzle" type="submit" value="Show me a puzzle!">
+      </li>
+    </ul>
+  </div>
+  <div class="imageBox" id="imageBox"></div>
 
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <!-- endbower -->
-    <!-- endbuild -->
-    
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
-    <!-- endbuild -->
-  </body>
+  <footer>
+    <p>Built at HEIG-VD for 2018 SCALA course</p>
+  </footer>
+
+
+  <!-- build:js scripts/vendor.js -->
+  <!-- bower:js -->
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js scripts/main.js -->
+  <script src="scripts/main.js"></script>
+  <!-- endbuild -->
+</body>
+
 </html>
