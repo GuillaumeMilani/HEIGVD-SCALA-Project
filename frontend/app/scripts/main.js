@@ -40,7 +40,7 @@ function getNewPuzzle() {
     var result = '';
     for(var i = 0; i < x; ++i){
         for(var j = 0; j < y; ++j){
-            result += ' <img src="images/'+ image_id_array[i*x+j] +'.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
+            result += ' <img src="images/'+ image_id_array[i*y+j] +'.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
         }
         result += '<br>'
     }
