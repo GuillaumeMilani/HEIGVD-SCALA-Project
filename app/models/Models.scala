@@ -1,11 +1,13 @@
 package models
 
-// Represent a database's course entry; the ID is optional because we don't necessary want to have it (for example when
-// we create a new course).
-case class Course(id: Option[Long], name: String, description: String, hasApero: Option[Boolean])
+case class Level(id: Option[Long], name: String, nextLevelId: Option[Long])
 
-// Represent a database's student entry.
-case class Student(id: Option[Long], firstName: String, lastName: String, age: Int, isInsolent: Boolean)
+case class User(id: Option[Long], login: String, password: String, score: Int, levelId: Option[Long])
 
-// Represent a database's course <- >student entry.
-case class CourseStudent(id: Option[Long], courseId: Long, studentId: Long)
+case class Label(id: Option[Long], label: String)
+
+case class LabelHasImage(id: Option[Long], labelId: Long, imageId: Long, clicks: Long)
+
+case class Image(id: Option[Long], fileName: String)
+
+case class LabeledImage(id: Option[Long], labelId: Long)
