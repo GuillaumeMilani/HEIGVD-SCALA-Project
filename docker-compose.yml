@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    build: database/
+    ports: 
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    expose:
+      - 3306
+  server:
+    build: server/
+    ports: 
+      - "9000:9000"
+    environment:
+      - DB_URL="jdbc:mysql://db/scala_project"
+      - DB_USER="root"
+      - DB_PASSWORD=""
+    expose:
+      - 9000

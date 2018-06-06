@@ -1,0 +1,16 @@
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Pages
+GET        /                        controllers.HomeController.index
++nocsrf # the "nocsrf" modifier tag is used to disable the CSRF filter for the following route in order to avoid an "Unauthorized" error
+GET        /about                   controllers.HomeController.about
+# Play's JavaScript routes manager
+GET        /javascriptRoutes        controllers.HomeController.javascriptRoutes
+
+# Map static resources from the /public folder to the /assets URL path
+GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+
+      
