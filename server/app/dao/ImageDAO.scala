@@ -18,19 +18,22 @@ trait ImageComponent {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc) // Primary key, auto-incremented
     def filename = column[String]("filename")
 
+    def labelId = column[Long]("label_id")
+
     // Map the attributes with the model; the ID is optional.
-    def * = (id.?, filename) <> (Image.tupled, Image.unapply)
+    def * = (id.?, filename, labelId.?) <> (Image.tupled, Image.unapply)
   }
 
 }
 
 @Singleton
-class ImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends ImageComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class ImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends ImageComponent with LabelComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
   // Get the object-oriented list of images directly from the query table.
   val images = TableQuery[ImageTable]
+  val labels = TableQuery[LabelTable]
 
   /** Retrieve the list of images */
   def list(): Future[Seq[Image]] = {
@@ -41,6 +44,9 @@ class ImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   /** Retrieve a image from the id. */
   def findById(id: Long): Future[Option[Image]] =
     db.run(images.filter(_.id === id).result.headOption)
+
+  def findByLabel(labelId: Long) =
+    db.run(images.filter(_.id === labelId).result)
 
   /** Insert a new image, then return it. */
   def insert(image: Image): Future[Image] = {

@@ -21,6 +21,7 @@ trait LabelComponent {
     // Map the attributes with the model; the ID is optional.
     def * = (id.?, label) <> (Label.tupled, Label.unapply)
   }
+
 }
 
 @Singleton
@@ -56,4 +57,10 @@ class LabelDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   /** Delete a label, then return an integer that indicate if the label was found (1) or not (0). */
   def delete(id: Long): Future[Int] =
     db.run(labels.filter(_.id === id).delete)
+
+  def randomLabel(): Future[Option[Label]] = {
+    val rand = SimpleFunction.nullary[Double]("rand")
+    val query = labels.sortBy(_ => rand)
+    db.run(query.result.headOption)
+  }
 }
