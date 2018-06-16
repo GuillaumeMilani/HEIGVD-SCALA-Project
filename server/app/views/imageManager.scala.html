@@ -11,7 +11,7 @@
 </section>
 <section>
     Add your <strong>OWN</strong> image!*
-    @helper.form(action = routes.HomeController.postImage, 'enctype -> "multipart/form-data") {
+    @helper.form(action = routes.ImageController.postImages, 'enctype -> "multipart/form-data") {
         <p>
             <label for="pictures">Files</label>
             <br/>
