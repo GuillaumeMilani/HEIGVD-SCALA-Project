@@ -1,31 +1,27 @@
-@(message: String)
+@(images: Seq[Image])
 
-@defining(play.core.PlayVersion.current) { version =>
-    <h1>Students</h1>
-    <table class="things-table" id="table-students">
-        <tr>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Age</th>
-            <th>Is Insolent?</th>
-            <th></th>
-        </tr>
-    </table>
-
-    <h1>Courses</h1>
-    <table class="things-table" id="table-courses">
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Has apero?</th>
-            <th></th>
-        </tr>
-    </table>
-
-Add your <strong>OWN</strong> student!*
-    <p>
-        Edit students and even more with the REST API!
-    </p>
+<section>
+    <h1>Dat image manager</h1>
+    <p>Your images : </p>
+    <ul>
+        @for(image <- images) {
+            <li>@image.id : @image.fileName</li>
+        }
+    </ul>
+</section>
+<section>
+    Add your <strong>OWN</strong> image!*
+    <!-- You may need to compile the application so the IDE will recognize the "postStudent" route. -->
+    <form class="form-post-image" method="post" action="@routes.HomeController.postImage">
+        <p>
+            <label for="fileName">File name</label>
+            <br/>
+            <input type="text" name="fileName" id="fileName">
+        </p>
+        <p>
+            <input type="submit" value="Create Image!">
+        </p>
+    </form>
     <br/>
     <a href="@routes.HomeController.about()">About...</a>
-}
+</section>

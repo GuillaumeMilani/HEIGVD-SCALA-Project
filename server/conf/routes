@@ -5,6 +5,8 @@
 
 # Pages
 GET         /                        controllers.HomeController.index
++nocsrf
+POST        /                        controllers.HomeController.postImage
 +nocsrf # the "nocsrf" modifier tag is used to disable the CSRF filter for the following route in order to avoid an "Unauthorized" error
 GET         /about                   controllers.HomeController.about
 # Play's JavaScript routes manager
