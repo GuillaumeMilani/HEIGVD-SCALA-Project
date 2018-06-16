@@ -59,7 +59,7 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
     val newImage = Image(null, imageRequest.fileName, null)
 
     imageDAO.insert(newImage) map (_ =>
-      Redirect(routes.HomeController.index())
+      Redirect(routes.HomeController.welcome())
       )
   }
 
@@ -68,5 +68,12 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
     */
   def about = Action {
     Ok(views.html.about(title))
+  }
+
+  def welcome = Action.async {
+    val images = imageDAO.list()
+    images map { images =>
+      Ok(views.html.welcomeIndex("Salut copain", images))
+    }
   }
 }
