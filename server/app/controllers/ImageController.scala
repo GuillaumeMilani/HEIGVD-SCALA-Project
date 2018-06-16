@@ -1,17 +1,21 @@
 package controllers
 
+import java.nio.file.{Files, Paths}
+
 import dao.ImageDAO
 import javax.inject.{Inject, Singleton}
 import models.Image
+import play.Environment
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class ImageController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) extends AbstractController(cc) {
+class ImageController @Inject()(cc: ControllerComponents, environment: Environment, imageDAO: ImageDAO) extends AbstractController(cc) {
 
   // Convert a Student-model object into a JsValue representation, which means that we serialize it into JSON.
   implicit val imageToJson: Writes[Image] = (
@@ -48,6 +52,25 @@ class ImageController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ex
   def getImages = Action.async {
     val imagesList = imageDAO.list()
     imagesList map (i => Ok(Json.toJson(i)))
+  }
+
+  def postImages = Action(parse.multipartFormData).async { implicit request =>
+    val referer = request.headers.get("referer")
+
+    val futures = request.body.files.map(picture => {
+      val filename = Paths.get(picture.filename).getFileName
+      val file = environment.getFile("/public/upload")
+      if (!file.exists()) {
+        Files.createDirectory(file.toPath)
+      }
+      picture.ref.moveTo(Paths.get(s"${file.getAbsolutePath}/$filename"), replace = true)
+
+      val newImage = Image(null, "upload/" + filename.toString, null)
+
+      imageDAO.insert(newImage)
+    })
+
+    Future.sequence(futures).map(_ => Redirect(referer.get))
   }
 
   /**

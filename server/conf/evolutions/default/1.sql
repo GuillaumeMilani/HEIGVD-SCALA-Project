@@ -4,7 +4,7 @@
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS label (
   id    INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  LABEL VARCHAR(45) NOT NULL
+  label VARCHAR(45) NOT NULL
 )
   ENGINE = InnoDB;
 
