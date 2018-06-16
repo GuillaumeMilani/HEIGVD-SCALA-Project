@@ -15,6 +15,7 @@ GET         /javascriptRoutes        controllers.HomeController.javascriptRoutes
 
 GET         /images                  controllers.ImageController.getImages
 POST        /images                  controllers.ImageController.createImage
+POST        /puzzle                  controllers.HomeController.scorePuzzle
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)

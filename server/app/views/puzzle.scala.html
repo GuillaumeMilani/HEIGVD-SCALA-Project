@@ -25,14 +25,13 @@
     <div class="imageBox" id="imageBox">
         <p> Click on all images that correspond to the keyword <b> KEYWORD </b> </p>
         @for(image <- images) {
-            <img src="@routes.Assets.versioned(image.fileName)" alt="Image" class="notClicked" height="100" width="100" onclick="onImageClick(event)">
+            <img src="@routes.Assets.versioned(image.fileName)" alt="Image" id="@image.id" class="notClicked" height="100" width="100" onclick="onImageClick(event)">
         }
     </div>
-
-    <input type="submit" value="I have chosen all images. Give me points!"><br>
-
+    <input type="submit" value="I have chosen all images. Give me points!" onclick="postPuzzle('KEYWORD')"><br><br>
     <a href="@routes.HomeController.welcome()">Add images here!</a>
 
 </section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
 

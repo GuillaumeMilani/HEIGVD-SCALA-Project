@@ -29,7 +29,8 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, env
       JavaScriptReverseRouter("jsRoutes")(
         //        routes.javascript.StudentsController.getStudents,
         routes.javascript.ImageController.getImages,
-        routes.javascript.HomeController.postImage
+        routes.javascript.HomeController.postImage,
+        routes.javascript.HomeController.scorePuzzle
       )
     ).as("text/javascript")
   }
@@ -86,7 +87,12 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, env
   def welcome = Action.async {
     val images = imageDAO.list()
     images map { images =>
-      Ok(views.html.welcomeIndex("Salut copain", images))
+      Ok(views.html.welcomeIndex("aldo", images))
     }
   }
+
+  def scorePuzzle = Action.async { implicit request =>
+    ???
+  }
+
 }
