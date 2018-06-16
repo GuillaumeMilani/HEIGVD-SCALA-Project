@@ -3,12 +3,19 @@ package controllers
 import dao.ImageDAO
 import javax.inject._
 import models.Image
+import models.Puzzle
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
 
 
 /**
@@ -78,7 +85,18 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
     }
   }
 
+  implicit val puzzleReads: Reads[Puzzle] = (
+    (JsPath \ "clicked").read[Seq[String]] and
+      (JsPath \ "notClicked").read[Seq[String]] and
+      (JsPath \ "keyword").read[String]
+    ) (Puzzle.apply _)
+
+
+
+
   def scorePuzzle = Action.async { implicit request =>
+    val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
+    //assign points and return new page?
     ???
   }
 
