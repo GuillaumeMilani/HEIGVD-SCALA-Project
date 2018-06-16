@@ -1,14 +1,18 @@
 package controllers
 
+import java.nio.file.{Files, Paths}
+
 import dao.ImageDAO
 import javax.inject._
 import models.Image
+import play.Environment
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 /**
@@ -16,7 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, environment: Environment) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
 
@@ -43,7 +47,7 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
   // Need to import "play.api.data._" and "play.api.data.Forms._"
   def imageForm = Form(
     mapping(
-      "fileName" -> text,
+      "files" -> text,
     )(ImageRequest.apply)(ImageRequest.unapply)
   )
 
@@ -53,14 +57,23 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
     * Be careful: if you have a "Unauthorized" error when accessing this action you have to add a "nocsrf" modifier tag
     * in the routes file above this route (see the routes file of this application for an example).
     */
-  def postImage = Action.async { implicit request =>
+  def postImage = Action(parse.multipartFormData).async { implicit request =>
     val referer = request.headers.get("referer")
-    val imageRequest = imageForm.bindFromRequest.get
-    val newImage = Image(null, imageRequest.fileName, null)
 
-    imageDAO.insert(newImage) map (_ =>
-      Redirect(routes.HomeController.welcome())
-      )
+    val futures = request.body.files.map(picture => {
+      val filename = Paths.get(picture.filename).getFileName
+      val file = environment.getFile("/public/upload")
+      if (!file.exists()) {
+        Files.createDirectory(file.toPath)
+      }
+      picture.ref.moveTo(Paths.get(s"${file.getAbsolutePath}/$filename"), replace = true)
+
+      val newImage = Image(null, "upload/" + filename.toString, null)
+
+      imageDAO.insert(newImage)
+    })
+
+    Future.sequence(futures).map(_ => Redirect(referer.get))
   }
 
   /**

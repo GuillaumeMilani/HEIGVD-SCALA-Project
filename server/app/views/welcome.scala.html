@@ -11,17 +11,16 @@
 </section>
 <section>
     Add your <strong>OWN</strong> image!*
-    <!-- You may need to compile the application so the IDE will recognize the "postStudent" route. -->
-    <form class="form-post-image" method="post" action="@routes.HomeController.postImage">
+    @helper.form(action = routes.HomeController.postImage, 'enctype -> "multipart/form-data") {
         <p>
-            <label for="fileName">File name</label>
+            <label for="pictures">Files</label>
             <br/>
-            <input type="text" name="fileName" id="fileName">
+            <input type="file" multiple name="pictures" id="files">
         </p>
         <p>
             <input type="submit" value="Create Image!">
         </p>
-    </form>
+    }
     <br/>
     <a href="@routes.HomeController.about()">About...</a>
 </section>
