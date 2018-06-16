@@ -1,0 +1,11 @@
+The user can click on a specified area to earn points.
+The user can buy points generators with points (used as money).
+Points generators creates x points each second.
+The user can buy bonus with points.
+Bonuses upgrade a specific points generator or the clickable zone (more points each click for exemple).
+The user can resolve image classification exercice to gain a booster for points.
+An area pops from time to time to begin the image classification exercice.
+The image classification exercice can be with a known or with an unknown image.
+The user can sign in.
+The user can sign up.
+The admin can see the image classification exercice statistics.
