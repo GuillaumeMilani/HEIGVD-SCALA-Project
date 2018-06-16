@@ -1,6 +1,6 @@
 package controllers
 
-import dao.{ImageDAO, LabelDAO}
+import dao.{ImageDAO, LabelDAO, LabelHasImageDAO}
 import javax.inject._
 import models.Image
 import models.Puzzle
@@ -14,7 +14,6 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -24,7 +23,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO, environment: Environment) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO, environment: Environment, labelHasImageDAO: LabelHasImageDAO) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
 
@@ -71,6 +70,49 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
 
   def scorePuzzle = Action.async { implicit request =>
     val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
+    val keyword = json.keyword;
+    val clicked = json.clicked.map(a => a.toLong)
+    val notClicked = json.notClicked.map(a => a.toLong)
+    val images = imageDAO.list()
+
+    var correct = true; //Check the user made no errors
+    for(id <- clicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword){
+          correct = false
+          //break doesn't exist in scala because fuck you
+        }
+      }
+    }
+
+    if(!correct){
+      //return no points
+    }
+
+    for(id <- notClicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword){
+          correct = false
+          //break doesn't exist in scala because fuck you
+        }
+      }
+    }
+
+    if(!correct){
+      //return no points
+    }
+
+    for(id <- clicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty){
+          labelHasImageDAO.addAClick(id, keyword);
+        }
+      }
+    }
+
+    //TODO continue using pseudocode
+
+
     //assign points and return new page?
     ???
   }
