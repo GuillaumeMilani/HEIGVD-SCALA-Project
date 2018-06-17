@@ -1,35 +1,49 @@
 @(images: Seq[Image], labels: Seq[Label])
 
-@main("Manage images") {
-    <section>
-        <h1>Dat image manager</h1>
-        <p>Your images : </p>
-        <ul>
-        @for(image <- images) {
-            <li>@image.id : @image.fileName</li>
-        }
-        </ul>
-    </section>
-    <section>
-        Add your <strong>OWN</strong> image!*
-        @helper.form(action = routes.ImageController.postImages, 'enctype -> "multipart/form-data") {
-            <p>
-                <label for="pictures">Files: </label>
-                <input type="file" multiple name="pictures" id="files">
-            </p>
-            <p>
-                <label for="labels">Labels: </label>
-                <select name="labels" id="labels">
-                @for(label <- labels) {
-                    <option value="@label.id">@label.label</option>
-                }
-                </select>
-            </p>
-            <p>
-                <input type="submit" value="Create Image!">
-            </p>
-        }
-        <br/>
-        <a href="@routes.HomeController.about()">About...</a>
-    </section>
-}
+    @main("Manage images") {
+        <section>
+            <h1>Dat image manager</h1>
+            <p>Your images : </p>
+            <ul>
+            @for(image <- images) {
+                <li>@image.id : @image.fileName</li>
+            }
+            </ul>
+        </section>
+        <section>
+            Add a label
+
+            @helper.form(action = routes.LabelController.postLabel) {
+                <p>
+                    <label for="label">Create new label</label>
+                    <input type="text" id="label" name="label" />
+                </p>
+                <p>
+                    <input type="submit" value="Create Label!">
+                </p>
+            }
+        </section>
+        <section>
+            Add your <strong>OWN</strong> image!*
+            @helper.form(action = routes.ImageController.postImages, 'enctype -> "multipart/form-data") {
+                <p>
+                    <label for="pictures">Files: </label>
+                    <input type="file" multiple name="pictures" id="files">
+                </p>
+                <p>
+                    <label for="label">Labels: </label>
+                    <select name="label" id="label">
+                        <option value="-1" selected>None</option>
+                        @for(label <- labels) {
+                            <option value="@label.id">@label.label</option>
+                        }
+                    </select>
+                </p>
+                <p>
+                    <input type="submit" value="Create Image!">
+                </p>
+            }
+            <br/>
+            <a href="@routes.HomeController.about()">About...</a>
+        </section>
+    }

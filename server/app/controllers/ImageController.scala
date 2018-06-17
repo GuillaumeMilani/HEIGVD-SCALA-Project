@@ -2,7 +2,7 @@ package controllers
 
 import java.nio.file.{Files, Paths}
 
-import dao.ImageDAO
+import dao.{ImageDAO, LabelDAO}
 import javax.inject.{Inject, Singleton}
 import models.Image
 import play.Environment
@@ -11,11 +11,11 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 @Singleton
-class ImageController @Inject()(cc: ControllerComponents, environment: Environment, imageDAO: ImageDAO) extends AbstractController(cc) {
+class ImageController @Inject()(cc: ControllerComponents, environment: Environment, imageDAO: ImageDAO, labelDAO: LabelDAO) extends AbstractController(cc) {
 
   // Convert a Student-model object into a JsValue representation, which means that we serialize it into JSON.
   implicit val imageToJson: Writes[Image] = (
@@ -45,6 +45,15 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
+  def manageImages = Action.async {
+    val imagesFuture = imageDAO.list()
+    val labelsFuture = labelDAO.list()
+    for {
+      images <- imagesFuture
+      labels <- labelsFuture
+    } yield Ok(views.html.imageManager(images, labels))
+  }
+
   /**
     * Get the list of all existing students, then return it.
     * The Action.async is used because the request is asynchronous.
@@ -57,19 +66,25 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
   def postImages = Action(parse.multipartFormData).async { implicit request =>
     val referer = request.headers.get("referer")
 
-    val futures = request.body.files.map(picture => {
-      val filename = Paths.get(picture.filename).getFileName
-      val file = environment.getFile("/public/upload")
-      if (!file.exists()) {
-        Files.createDirectory(file.toPath)
-      }
-      picture.ref.moveTo(Paths.get(s"${file.getAbsolutePath}/$filename"), replace = true)
+    val labelString = request.body.asFormUrlEncoded("label").head
+    val labelId = labelString.toLong match {
+      case x if x > -1 => Some(x)
+      case _ => None
+    }
 
-      val newImage = Image(null, "upload/" + filename.toString, null)
+    val futures = request.body.files
+      .filter(file => file.contentType.getOrElse("").startsWith("image/"))
+      .map(picture => {
+        val filename = Paths.get(picture.filename).getFileName
+        val uploadFolder = environment.getFile("/public/upload")
+        if (!uploadFolder.exists()) {
+          Files.createDirectory(uploadFolder.toPath)
+        }
+        picture.ref.moveTo(Paths.get(s"${uploadFolder.getAbsolutePath}/$filename"), replace = true)
 
-      imageDAO.insert(newImage)
-    })
+        imageDAO.insert(Image(None, "upload/" + filename.toString, labelId))
 
+      })
     Future.sequence(futures).map(_ => Redirect(referer.get))
   }
 

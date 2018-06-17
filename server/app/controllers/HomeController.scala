@@ -2,19 +2,17 @@ package controllers
 
 import dao.{ImageDAO, LabelDAO}
 import javax.inject._
-import play.Environment
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO, environment: Environment) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
 
@@ -39,15 +37,6 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     */
   def about = Action {
     Ok(views.html.about(title))
-  }
-
-  def manageImages = Action.async {
-    val imagesFuture = imageDAO.list()
-    val labelsFuture = labelDAO.list()
-    for {
-      images <- imagesFuture
-      labels <- labelsFuture
-    } yield Ok(views.html.imageManager(images, labels))
   }
 
   def scorePuzzle = Action.async { implicit request =>
