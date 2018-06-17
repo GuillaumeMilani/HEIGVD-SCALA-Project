@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS label (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS image (
   id       INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  filename VARCHAR(45) NOT NULL,
+  filename VARCHAR(200) NOT NULL,
   label_id INT         NULL,
   FOREIGN KEY (label_id) REFERENCES label (id)
 )
@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS image (
 -- Table  image_has_label
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS image_has_label (
+  id       INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   label_id INT NOT NULL,
   image_id INT NOT NULL,
   clicks   INT NOT NULL,
-  PRIMARY KEY (label_id, image_id),
   FOREIGN KEY (label_id) REFERENCES label (id),
   FOREIGN KEY (image_id) REFERENCES image (id)
 )

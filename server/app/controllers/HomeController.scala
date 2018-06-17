@@ -53,27 +53,32 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
   def scorePuzzle = Action.async { implicit request =>
     val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
     val keywordId: Long = json.keyword
-    val clicked = json.clicked.map(a => a.toLong)
-    val notClicked = json.notClicked.map(a => a.toLong)
-    val images = imageDAO.findRandom(numberOfImages)
-    val label = labelDAO.findRandom
+    val clicked = json.clicked.map(_.toLong)
+    val notClicked = json.notClicked.map(_.toLong)
 
-    def returnOk(message: String) =
-      for {
-        images <- images
-        label <- label
-      } yield Ok(views.html.index(message, images, label))
+    var falsePositive = 0
+    var truePositive = 0
+    var falseNegative = 0
+    var trueNegative = 0
 
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
         image match {
           case Some(img) =>
+            // The guy clicked, record it
+            labelHasImageDAO.addAClick(id, keywordId)
+
             img.labelId match {
+              // GG good label
+              case Some(labelId) if labelId == keywordId =>
+                truePositive += 1
+              // The image has a label but not this one
               case Some(labelId) if labelId != keywordId =>
-                returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+                falsePositive += 1
+              // The image has no label, can't know if click correct or not
               case _ => // Do nothing
             }
-          case _ => // Do nothing
+          case _ => // The image doesn't exist, do nothing
         }
       }
     }
@@ -83,25 +88,28 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
         image match {
           case Some(img) =>
             img.labelId match {
+              // GG you didn't click on this image
+              case Some(labelId) if labelId != keywordId =>
+                trueNegative += 1
+              // Boy, you should have clicked
               case Some(labelId) if labelId == keywordId =>
-                returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+                falseNegative += 1
+              // The image has no label, can't know if click correct or not
               case _ => // Do nothing
             }
-          case _ => // Do nothing
+          case _ => // The image doesn't exist, do nothing
         }
       }
     }
 
-    for (id <- clicked) {
-      for (image <- imageDAO.findById(id)) {
-        image match {
-          case Some(_) =>
-            labelHasImageDAO.addAClick(id, keywordId)
-          case _ => // Do nothing
-        }
-      }
-    }
+    val images = imageDAO.findRandom(numberOfImages)
+    val label = labelDAO.findRandom
 
-    returnOk("Merci! Vos résultats ont été validés.")
+    val score = truePositive + trueNegative - falsePositive - falseNegative
+
+    for {
+      images <- images
+      label <- label
+    } yield Ok(views.html.index("Your result has been recorded. Your score is " + score, images, label))
   }
 }
