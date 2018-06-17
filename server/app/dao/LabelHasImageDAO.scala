@@ -25,6 +25,7 @@ trait LabelHasImageComponent {
     // Map the attributes with the model; the ID is optional.
     def * = (id.?, labelId, imageId, clicks) <> (LabelHasImage.tupled, LabelHasImage.unapply)
   }
+
 }
 
 @Singleton
@@ -61,20 +62,13 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   def delete(id: Long): Future[Int] =
     db.run(labelHasImages.filter(_.id === id).delete)
 
-  def addAClick(imageId: Long, keyword: String): Unit ={
-    for(label <- labelDAO.getIdFromKeyword(keyword)){
-      if(!label.isEmpty){
-        val id = label.get.id
-        val labelHasImage: Future[Option[LabelHasImage]] = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === id).result.headOption)
-        for(lhi <- labelHasImage){
-          if(!lhi.isEmpty){
-            //lhi.get.clicks = lhi.get.clicks + 1
-            //TODO uncomment once DB changes have gone through (lhi has a long id now)
-            //update(lhi.get.id, lhi)
-          }
-        }
+  def addAClick(imageId: Long, labelId: Long): Unit = {
+    val labelHasImage = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === labelId).result.headOption)
+    for (lhi <- labelHasImage) {
+      lhi match {
+        case Some(currentLhi) => update(currentLhi.id.get, LabelHasImage(currentLhi.id, currentLhi.labelId, currentLhi.imageId, currentLhi.clicks + 1))
+        case None => // Do nothing
       }
     }
   }
-
 }
