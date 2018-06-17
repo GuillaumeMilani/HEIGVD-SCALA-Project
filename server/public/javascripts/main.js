@@ -80,7 +80,7 @@ function postPuzzle(keyword) {
             notClicked: notClicked,
             keyword: parseInt($('#keywordId').val())
         })
-    }).done(function () {
-        console.log("SENT STUFF")
+    }).done(function (response) {
+        $("body").replaceWith(response)
     })
 }
