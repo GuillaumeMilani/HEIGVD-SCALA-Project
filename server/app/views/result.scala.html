@@ -24,7 +24,13 @@
             </tr>
         </thead>
         <tbody>
-
+            @for(image <- images){
+                <tr>
+                    <th>@image.imageId</th>
+                    <th>@image.labelId</th>
+                    <th>@image.clicks</th>
+                </tr>
+            }
         </tbody>
         <tfoot>
             <tr>
@@ -36,14 +42,6 @@
     </table>
 
 </section>
-
-<script>
-    for each (img in images) {
-
-        $(table).find('tbody').append( "<tr><td>"+img.imageId+"</td></tr>" );
-        }
-
- </script>
 
 <script src="@routes.Assets.versioned("javascripts/pagination.js")"></script>
 <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
