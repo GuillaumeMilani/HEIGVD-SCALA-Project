@@ -62,7 +62,7 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
     db.run(labelHasImages.filter(_.id === id).delete)
 
   def addAClick(imageId: Long, keyword: String): Unit ={
-    for(label <- labelDAO.getIdFromKeyword(keyword)){
+    /*for(label <- labelDAO.getIdFromKeyword(keyword)){
       if(!label.isEmpty){
         val id = label.get.id
         val labelHasImage = db.run(labelHasImages.filter(a => a.imageId == imageId && a.labelId == id).result.headOption)
@@ -75,6 +75,6 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
         }
       }
     }
-  }
+  */}
 
 }
