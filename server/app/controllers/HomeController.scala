@@ -98,7 +98,9 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     }
 
     if(!correct){
-      //return no points
+      images map { images =>
+        Ok(views.html.index("Vous avez commis des erreurs dans la classification! Aucun point obtenu. Vous pouvez réessayer.", images))
+      }
     }
 
     for(id <- notClicked){
@@ -111,7 +113,9 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     }
 
     if(!correct){
-      //return no points
+      images map { images =>
+        Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
+      }
     }
 
     for(id <- clicked){
@@ -121,12 +125,9 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
         }
       }
     }
-
-    //TODO continue using pseudocode
-
-
-    //assign points and return new page?
-    ???
+    images map { images =>
+      Ok(views.html.index("Merci! Vos résultats ont été validés.", images))
+    }
   }
 
 }
