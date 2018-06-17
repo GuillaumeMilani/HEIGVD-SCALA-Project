@@ -62,7 +62,7 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
       for {
         images <- images
         label <- label
-      } yield Ok(views.html.index(message, images, label))
+      } yield Ok(views.html.index(message, images, label.get))
 
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {

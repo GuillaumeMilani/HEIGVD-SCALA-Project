@@ -42,9 +42,9 @@ class LabelDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def findById(id: Long): Future[Option[Label]] =
     db.run(labels.filter(_.id === id).result.headOption)
 
-  def findRandom: Future[Label] = {
+  def findRandom: Future[Option[Label]] = {
     val rand = SimpleFunction.nullary[Double]("rand")
-    db.run(labels.sortBy(_ => rand).result.head)
+    db.run(labels.sortBy(_ => rand).result.headOption)
   }
 
   /** Insert a new label, then return it. */

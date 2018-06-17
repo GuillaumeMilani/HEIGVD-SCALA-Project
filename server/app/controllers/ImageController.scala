@@ -61,7 +61,7 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     for {
       images <- futureImages
       label <- futureLabel
-    } yield Ok(views.html.index("Salut copain", images, label))
+    } yield if(label.isDefined) Ok(views.html.index("Salut copain", images, label.get)) else Ok(views.html.imageManager(images, Nil))
   }
 
   def getImages = Action.async {
