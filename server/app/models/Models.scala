@@ -10,4 +10,4 @@ case class LabelHasImage(id: Option[Long], labelId: Long, imageId: Long, clicks:
 
 case class Image(id: Option[Long], fileName: String, labelId: Option[Long])
 
-case class Puzzle(clicked: Seq[String], notClicked: Seq[String], keyword: String)
+case class Puzzle(clicked: Seq[String], notClicked: Seq[String], keyword: Long)

@@ -47,12 +47,12 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
   implicit val puzzleReads: Reads[Puzzle] = (
     (JsPath \ "clicked").read[Seq[String]] and
       (JsPath \ "notClicked").read[Seq[String]] and
-      (JsPath \ "keyword").read[String]
+      (JsPath \ "keyword").read[Long]
     ) (Puzzle.apply _)
 
   def scorePuzzle = Action.async { implicit request =>
     val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
-    val keywordId = json.keyword.toInt
+    val keywordId: Long = json.keyword
     val clicked = json.clicked.map(a => a.toLong)
     val notClicked = json.notClicked.map(a => a.toLong)
     val images = imageDAO.findRandom(numberOfImages)
@@ -71,7 +71,9 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
             img.labelId match {
               case Some(labelId) if labelId != keywordId =>
                 returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+              case _ => // Do nothing
             }
+          case _ => // Do nothing
         }
       }
     }
@@ -83,7 +85,9 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
             img.labelId match {
               case Some(labelId) if labelId == keywordId =>
                 returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+              case _ => // Do nothing
             }
+          case _ => // Do nothing
         }
       }
     }
@@ -93,6 +97,7 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
         image match {
           case Some(_) =>
             labelHasImageDAO.addAClick(id, keywordId)
+          case _ => // Do nothing
         }
       }
     }

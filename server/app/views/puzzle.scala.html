@@ -27,6 +27,7 @@
             <img src="@routes.Assets.versioned(image.fileName)" alt="Image" id="@image.id" class="notClicked" height="100" width="100" onclick="onImageClick(event)">
             }
     </div>
+    <input type="hidden" name="keywordId" id="keywordId" value="@label.id" />
     <input type="submit" value="I have chosen all images. Give me points!" onclick="postPuzzle('@label.label')">
     <br>
     <br>

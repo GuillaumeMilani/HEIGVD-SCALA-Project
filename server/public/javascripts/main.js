@@ -20,22 +20,22 @@ function getNewPuzzle() {
     var x = document.getElementById('boxHeight').value;
     console.log(x)
     console.log(y)
-    
-    if(x < 1 || y < 1 || y > 20 || y > 20){
+
+    if (x < 1 || y < 1 || y > 20 || y > 20) {
         alert('Please enter valid dimensions for puzzle');
         return
     }
 
     var image_id_array = []
-    for (var i = 0; i < x*y; ++i){
+    for (var i = 0; i < x * y; ++i) {
         image_id_array.push(i);
     }
     shuffle(image_id_array);
-    
+
     var result = '';
-    for(var i = 0; i < x; ++i){
-        for(var j = 0; j < y; ++j){
-            result += ' <img src="images/'+ image_id_array[i*y+j] +'.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
+    for (var i = 0; i < x; ++i) {
+        for (var j = 0; j < y; ++j) {
+            result += ' <img src="images/' + image_id_array[i * y + j] + '.jpg" alt="Hello lol" class="notClicked" height="50" width="50" onclick="onImageClick(event)">'
         }
         result += '<br>'
     }
@@ -43,32 +43,33 @@ function getNewPuzzle() {
     document.getElementById('imageBox').innerHTML = result;
 }
 
-function onImageClick(e){
+function onImageClick(e) {
     console.log(e)
     var element = e.target;
-    if(element.className == 'clicked'){
+    if (element.className == 'clicked') {
         element.className = 'notClicked';
     } else {
         element.className = 'clicked'
     }
 }
 
-function postPuzzle(keyword){
+function postPuzzle(keyword) {
     var all = document.getElementsByTagName("img");
-    clicked = []
-    notClicked = []
-    for (var i=0, max=all.length; i < max; i++) {
-        if(all[i].id != ""){
-            if(all[i].className == 'clicked'){
+    clicked = [];
+    notClicked = [];
+    for (var i = 0, max = all.length; i < max; i++) {
+        if (all[i].id !== "") {
+            if (all[i].className === 'clicked') {
                 clicked.push(all[i].id)
-            } else{
+            } else {
                 notClicked.push(all[i].id)
             }
         }
     }
 
     const router = jsRoutes.controllers.HomeController.scorePuzzle();
-    console.log("SENDING STUFF")
+    console.log("SENDING STUFF");
+    console.log("Keyword is " + typeof parseInt($('#keywordId').val()));
 
     $.ajax({
         method: router.method,
@@ -77,7 +78,7 @@ function postPuzzle(keyword){
         data: JSON.stringify({
             clicked: clicked,
             notClicked: notClicked,
-            keyword: keyword
+            keyword: parseInt($('#keywordId').val())
         })
     }).done(function () {
         console.log("SENT STUFF")
