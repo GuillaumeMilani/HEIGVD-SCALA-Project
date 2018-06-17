@@ -50,49 +50,53 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
       (JsPath \ "keyword").read[String]
     ) (Puzzle.apply _)
 
-
   def scorePuzzle = Action.async { implicit request =>
     val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
-    val keyword = json.keyword
+    val keywordId = json.keyword.toInt
     val clicked = json.clicked.map(a => a.toLong)
     val notClicked = json.notClicked.map(a => a.toLong)
     val images = imageDAO.findRandom(numberOfImages)
     val label = labelDAO.findRandom
 
+    def returnOk(message: String) =
+      for {
+        images <- images
+        label <- label
+      } yield Ok(views.html.index(message, images, label))
+
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
-        if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          for {
-            images <- images
-            label <- label
-          } yield Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images, label))
-
+        image match {
+          case Some(img) =>
+            img.labelId match {
+              case Some(labelId) if labelId != keywordId =>
+                returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+            }
         }
       }
     }
 
     for (id <- notClicked) {
       for (image <- imageDAO.findById(id)) {
-        if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          for {
-            images <- images
-            label <- label
-          } yield Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images, label))
+        image match {
+          case Some(img) =>
+            img.labelId match {
+              case Some(labelId) if labelId == keywordId =>
+                returnOk("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.")
+            }
         }
       }
     }
 
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
-        if (!image.isEmpty) {
-          labelHasImageDAO.addAClick(id, keyword)
+        image match {
+          case Some(_) =>
+            labelHasImageDAO.addAClick(id, keywordId)
         }
       }
     }
 
-    for {
-      images <- images
-      label <- label
-    } yield Ok(views.html.index("Merci! Vos résultats ont été validés.", images, label))
+    returnOk("Merci! Vos résultats ont été validés.")
   }
 }
