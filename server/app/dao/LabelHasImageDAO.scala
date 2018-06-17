@@ -63,11 +63,11 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
     db.run(labelHasImages.filter(_.id === id).delete)
 
   def addAClick(imageId: Long, labelId: Long): Unit = {
-    val labelHasImage = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === labelId).result.headOption)
+    val labelHasImage: Future[Option[LabelHasImage]] = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === labelId).result.headOption)
     for (lhi <- labelHasImage) {
       lhi match {
         case Some(currentLhi) => update(currentLhi.id.get, LabelHasImage(currentLhi.id, currentLhi.labelId, currentLhi.imageId, currentLhi.clicks + 1))
-        case None => // Do nothing
+        case None => insert(LabelHasImage(None, labelId, imageId, 1))
       }
     }
   }
