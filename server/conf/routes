@@ -13,6 +13,9 @@ GET         /welcome                 controllers.HomeController.welcome
 # Play's JavaScript routes manager
 GET         /javascriptRoutes        controllers.HomeController.javascriptRoutes
 
+GET         /result                 controllers.HomeController.result
+
+
 GET         /images                  controllers.ImageController.getImages
 POST        /images                  controllers.ImageController.createImage
 

@@ -14,11 +14,11 @@ trait LabelHasImageComponent {
   import profile.api._
 
   // This class convert the database's labels table in a object-oriented entity: the Student model.
-  class LabelHasImageTable(tag: Tag) extends Table[LabelHasImage](tag, "label") {
+  class LabelHasImageTable(tag: Tag) extends Table[LabelHasImage](tag, "image_has_label") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc) // Primary key, auto-incremented
-    def labelId = column[Long]("labelId")
+    def labelId = column[Long]("label_id")
 
-    def imageId = column[Long]("imageId")
+    def imageId = column[Long]("image_id")
 
     def clicks = column[Long]("clicks")
 

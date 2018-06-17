@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class ImageController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) extends AbstractController(cc) {
 
-  // Convert a Student-model object into a JsValue representation, which means that we serialize it into JSON.
+  // Convert a image-model object into a JsValue representation, which means that we serialize it into JSON.
   implicit val imageToJson: Writes[Image] = (
     (JsPath \ "id").write[Option[Long]] and
       (JsPath \ "fileName").write[String] and

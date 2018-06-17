@@ -1,0 +1,53 @@
+@(images: Seq[LabelHasImage])
+
+<style>
+        tfoot input {
+            width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+        tfoot {
+            display: table-header-group;
+        }
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
+
+<section>
+    <h1>Statistics</h1>
+
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>image_id</th>
+                <th>keyword</th>
+                <th>clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+       
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>image_id</th>
+                <th>keyword</th>
+                <th>clicks</th>
+            </tr>
+        </tfoot>
+    </table>
+
+</section>
+
+<script>
+    for each (img in images) {
+
+        $(table).find('tbody').append( "<tr><td>"+img.imageId+"</td></tr>" );
+        }
+
+ </script>
+
+<script src="@routes.Assets.versioned("javascripts/pagination.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/main.js")"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+

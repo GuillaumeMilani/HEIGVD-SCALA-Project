@@ -1,8 +1,9 @@
 package controllers
 
 import dao.ImageDAO
+import dao.LabelHasImageDAO
 import javax.inject._
-import models.Image
+import models.{Image, LabelHasImage}
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
@@ -16,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelHasImageDAO: LabelHasImageDAO) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
 
@@ -73,7 +74,14 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO) ext
   def welcome = Action.async {
     val images = imageDAO.list()
     images map { images =>
-      Ok(views.html.welcomeIndex("Salut copain", images))
+      Ok(views.html.welcomeIndex("Projet Scala - Labelisatorus", images))
+    }
+  }
+
+  def result = Action.async {
+    val images = labelHasImageDAO.list()
+    images map { images =>
+      Ok(views.html.resultIndex("Projet Scala - Statistics",images))
     }
   }
 }
