@@ -11,6 +11,9 @@ POST        /labels                  controllers.LabelController.postLabel
 # Play's JavaScript routes manager
 GET         /javascriptRoutes        controllers.HomeController.javascriptRoutes
 
+GET         /result                 controllers.HomeController.result
+
+
 GET         /images                  controllers.ImageController.getImages
 POST        /images                  controllers.ImageController.postImages
 POST        /puzzle                  controllers.HomeController.scorePuzzle

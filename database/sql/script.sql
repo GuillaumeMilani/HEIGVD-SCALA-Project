@@ -33,10 +33,10 @@ CREATE TABLE IF NOT EXISTS image (
 -- Table  image_has_label
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS image_has_label (
+  id       INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
   label_id INT NOT NULL,
   image_id INT NOT NULL,
   clicks   INT NOT NULL,
-  PRIMARY KEY (label_id, image_id),
   FOREIGN KEY (label_id) REFERENCES label (id),
   FOREIGN KEY (image_id) REFERENCES image (id)
 )

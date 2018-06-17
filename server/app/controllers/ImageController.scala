@@ -17,7 +17,7 @@ import scala.concurrent.Future
 @Singleton
 class ImageController @Inject()(cc: ControllerComponents, environment: Environment, imageDAO: ImageDAO, labelDAO: LabelDAO) extends AbstractController(cc) {
 
-  // Convert a Student-model object into a JsValue representation, which means that we serialize it into JSON.
+  // Convert a image-model object into a JsValue representation, which means that we serialize it into JSON.
   implicit val imageToJson: Writes[Image] = (
     (JsPath \ "id").write[Option[Long]] and
       (JsPath \ "fileName").write[String] and

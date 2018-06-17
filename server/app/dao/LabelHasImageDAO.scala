@@ -14,11 +14,11 @@ trait LabelHasImageComponent {
   import profile.api._
 
   // This class convert the database's labels table in a object-oriented entity: the Student model.
-  class LabelHasImageTable(tag: Tag) extends Table[LabelHasImage](tag, "label") {
+  class LabelHasImageTable(tag: Tag) extends Table[LabelHasImage](tag, "image_has_label") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc) // Primary key, auto-incremented
-    def labelId = column[Long]("labelId")
+    def labelId = column[Long]("label_id")
 
-    def imageId = column[Long]("imageId")
+    def imageId = column[Long]("image_id")
 
     def clicks = column[Long]("clicks")
 
@@ -28,7 +28,7 @@ trait LabelHasImageComponent {
 }
 
 @Singleton
-class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends LabelHasImageComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, labelDAO: LabelDAO)(implicit executionContext: ExecutionContext) extends LabelHasImageComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
@@ -60,4 +60,21 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   /** Delete a label, then return an integer that indicate if the label was found (1) or not (0). */
   def delete(id: Long): Future[Int] =
     db.run(labelHasImages.filter(_.id === id).delete)
+
+  def addAClick(imageId: Long, keyword: String): Unit ={
+    /*for(label <- labelDAO.getIdFromKeyword(keyword)){
+      if(!label.isEmpty){
+        val id = label.get.id
+        val labelHasImage = db.run(labelHasImages.filter(a => a.imageId == imageId && a.labelId == id).result.headOption)
+        for(lhi <- labelHasImage){
+          if(!lhi.isEmpty){
+            lhi.get.clicks += 1
+            //TODO uncomment once DB changes have gone through (lhi has a long id now)
+            //update(lhi.get.id, lhi)
+          }
+        }
+      }
+    }
+  */}
+
 }
