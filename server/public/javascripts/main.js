@@ -79,7 +79,7 @@ function postPuzzle(keyword){
             notClicked: notClicked,
             keyword: keyword
         })
-    }).done(function () {
-        console.log("SENT STUFF")
+    }).done(function (response) {
+        $("body").replaceWith(response)
     })
 }
