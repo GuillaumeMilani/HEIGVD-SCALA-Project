@@ -66,34 +66,23 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     val notClicked = json.notClicked.map(a => a.toLong)
     val images = imageDAO.list()
 
-    var correct = true; //Check the user made no errors
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
         if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          correct = false
-          //break doesn't exist in scala because fuck you
+          images map { images =>
+            Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
+          }
         }
-      }
-    }
-
-    if (!correct) {
-      images map { images =>
-        Ok(views.html.index("Vous avez commis des erreurs dans la classification! Aucun point obtenu. Vous pouvez réessayer.", images))
       }
     }
 
     for (id <- notClicked) {
       for (image <- imageDAO.findById(id)) {
         if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          correct = false
-          //break doesn't exist in scala because fuck you
+          images map { images =>
+            Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
+          }
         }
-      }
-    }
-
-    if (!correct) {
-      images map { images =>
-        Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
       }
     }
 
@@ -104,6 +93,7 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
         }
       }
     }
+
     images map { images =>
       Ok(views.html.index("Merci! Vos résultats ont été validés.", images))
     }

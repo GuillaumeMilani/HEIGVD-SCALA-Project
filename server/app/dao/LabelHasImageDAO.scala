@@ -62,19 +62,19 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
     db.run(labelHasImages.filter(_.id === id).delete)
 
   def addAClick(imageId: Long, keyword: String): Unit ={
-    /*for(label <- labelDAO.getIdFromKeyword(keyword)){
+    for(label <- labelDAO.getIdFromKeyword(keyword)){
       if(!label.isEmpty){
         val id = label.get.id
-        val labelHasImage = db.run(labelHasImages.filter(a => a.imageId == imageId && a.labelId == id).result.headOption)
+        val labelHasImage: Future[Option[LabelHasImage]] = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === id).result.headOption)
         for(lhi <- labelHasImage){
           if(!lhi.isEmpty){
-            lhi.get.clicks += 1
+            //lhi.get.clicks = lhi.get.clicks + 1
             //TODO uncomment once DB changes have gone through (lhi has a long id now)
             //update(lhi.get.id, lhi)
           }
         }
       }
     }
-  */}
+  }
 
 }
