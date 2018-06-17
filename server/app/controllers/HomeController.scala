@@ -4,12 +4,22 @@ import dao.ImageDAO
 import dao.LabelHasImageDAO
 import javax.inject._
 import models.{Image, LabelHasImage}
+import dao.{ImageDAO, LabelDAO, LabelHasImageDAO}
+import javax.inject._
+import models.Image
+import models.Puzzle
 import play.api.data.Forms._
 import play.api.data._
+import play.Environment
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
 
 
 /**
@@ -17,16 +27,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelHasImageDAO: LabelHasImageDAO) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO, environment: Environment, labelHasImageDAO: LabelHasImageDAO) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
 
   def javascriptRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
-        //        routes.javascript.StudentsController.getStudents,
         routes.javascript.ImageController.getImages,
-        routes.javascript.HomeController.postImage
+        routes.javascript.HomeController.scorePuzzle
       )
     ).as("text/javascript")
   }
@@ -38,32 +47,14 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     }
   }
 
-  // Declare a case class that will be used in the new image's form
-  case class ImageRequest(fileName: String)
 
-  // Need to import "play.api.data._" and "play.api.data.Forms._"
-  def imageForm = Form(
-    mapping(
-      "fileName" -> text,
-    )(ImageRequest.apply)(ImageRequest.unapply)
-  )
+  def result = Action.async {
+    val images = labelHasImageDAO.list()
+    images map { images =>
+      Ok(views.html.resultIndex("Projet Scala - Statistics", images))
 
-  /**
-    * Called when the user try to post a new student from the view.
-    * See https://scalaplayschool.wordpress.com/2014/08/14/lesson-4-handling-form-data-with-play-forms/ for more information
-    * Be careful: if you have a "Unauthorized" error when accessing this action you have to add a "nocsrf" modifier tag
-    * in the routes file above this route (see the routes file of this application for an example).
-    */
-  def postImage = Action.async { implicit request =>
-    val referer = request.headers.get("referer")
-    val imageRequest = imageForm.bindFromRequest.get
-    val newImage = Image(null, imageRequest.fileName, null)
-
-    imageDAO.insert(newImage) map (_ =>
-      Redirect(routes.HomeController.welcome())
-      )
+    }
   }
-
   /**
     * Call the "about" html template.
     */
@@ -71,17 +62,71 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     Ok(views.html.about(title))
   }
 
-  def welcome = Action.async {
-    val images = imageDAO.list()
-    images map { images =>
-      Ok(views.html.welcomeIndex("Projet Scala - Labelisatorus", images))
-    }
+  def manageImages = Action.async {
+    val imagesFuture = imageDAO.list()
+    val labelsFuture = labelDAO.list()
+    for {
+      images <- imagesFuture
+      labels <- labelsFuture
+    } yield Ok(views.html.imageManager(images, labels))
   }
 
-  def result = Action.async {
-    val images = labelHasImageDAO.list()
-    images map { images =>
-      Ok(views.html.resultIndex("Projet Scala - Statistics",images))
+  implicit val puzzleReads: Reads[Puzzle] = (
+    (JsPath \ "clicked").read[Seq[String]] and
+      (JsPath \ "notClicked").read[Seq[String]] and
+      (JsPath \ "keyword").read[String]
+    ) (Puzzle.apply _)
+
+
+
+
+  def scorePuzzle = Action.async { implicit request =>
+    val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
+    val keyword = json.keyword;
+    val clicked = json.clicked.map(a => a.toLong)
+    val notClicked = json.notClicked.map(a => a.toLong)
+    val images = imageDAO.list()
+
+    var correct = true; //Check the user made no errors
+    for(id <- clicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword){
+          correct = false
+          //break doesn't exist in scala because fuck you
+        }
+      }
     }
+
+    if(!correct){
+      //return no points
+    }
+
+    for(id <- notClicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword){
+          correct = false
+          //break doesn't exist in scala because fuck you
+        }
+      }
+    }
+
+    if(!correct){
+      //return no points
+    }
+
+    for(id <- clicked){
+      for(image <- imageDAO.findById(id)){
+        if(!image.isEmpty){
+          labelHasImageDAO.addAClick(id, keyword);
+        }
+      }
+    }
+
+    //TODO continue using pseudocode
+
+
+    //assign points and return new page?
+    ???
   }
+
 }

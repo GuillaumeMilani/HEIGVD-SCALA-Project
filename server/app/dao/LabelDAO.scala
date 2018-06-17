@@ -63,4 +63,8 @@ class LabelDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     val query = labels.sortBy(_ => rand)
     db.run(query.result.headOption)
   }
+
+  def getIdFromKeyword(keyword: String): Future[Option[Label]] = {
+    db.run(labels.filter(_.label === keyword).result.headOption)
+  }
 }

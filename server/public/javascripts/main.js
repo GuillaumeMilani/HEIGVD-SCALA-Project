@@ -1,8 +1,3 @@
-
-document.getElementById('getNewPuzzle').addEventListener('click', getNewPuzzle);
-
-
-
 /**
  * Javascript array shuffle function, source:
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -56,4 +51,35 @@ function onImageClick(e){
     } else {
         element.className = 'clicked'
     }
+}
+
+function postPuzzle(keyword){
+    var all = document.getElementsByTagName("img");
+    clicked = []
+    notClicked = []
+    for (var i=0, max=all.length; i < max; i++) {
+        if(all[i].id != ""){
+            if(all[i].className == 'clicked'){
+                clicked.push(all[i].id)
+            } else{
+                notClicked.push(all[i].id)
+            }
+        }
+    }
+
+    const router = jsRoutes.controllers.HomeController.scorePuzzle();
+    console.log("SENDING STUFF")
+
+    $.ajax({
+        method: router.method,
+        url: router.url,
+        contentType: 'application/json',
+        data: JSON.stringify({
+            clicked: clicked,
+            notClicked: notClicked,
+            keyword: keyword
+        })
+    }).done(function () {
+        console.log("SENT STUFF")
+    })
 }

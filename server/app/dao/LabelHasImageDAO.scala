@@ -28,7 +28,7 @@ trait LabelHasImageComponent {
 }
 
 @Singleton
-class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends LabelHasImageComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, labelDAO: LabelDAO)(implicit executionContext: ExecutionContext) extends LabelHasImageComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
@@ -60,4 +60,22 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   /** Delete a label, then return an integer that indicate if the label was found (1) or not (0). */
   def delete(id: Long): Future[Int] =
     db.run(labelHasImages.filter(_.id === id).delete)
+
+  def addAClick(imageId: Long, keyword: String): Unit ={
+    ??? //TODO finish this method, add a click using get then update
+  }
+//    for(label <- labelDAO.getIdFromKeyword(keyword)){
+//      if(!label.isEmpty){
+//        val id = label.get.id
+//        val labelHasImage = labelHasImages.filter(a => a.imageId == imageId && a.labelId == id).result.headOption
+//        for(lhi <- labelHasImage){
+//          if(!lhi.isEmpty)
+//          val updatedValue = lhi.copy(Some(id))
+//          db.run(labelHasImages.filter(_.id === id).update(updatedValue))
+//
+//        }
+//      }
+//    }
+//  }
+
 }

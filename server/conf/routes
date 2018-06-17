@@ -6,10 +6,10 @@
 # Pages
 GET         /                        controllers.HomeController.index
 +nocsrf
-POST        /                        controllers.HomeController.postImage
+POST        /                        controllers.ImageController.postImages
 +nocsrf # the "nocsrf" modifier tag is used to disable the CSRF filter for the following route in order to avoid an "Unauthorized" error
 GET         /about                   controllers.HomeController.about
-GET         /welcome                 controllers.HomeController.welcome
+GET         /manageImages            controllers.HomeController.manageImages
 # Play's JavaScript routes manager
 GET         /javascriptRoutes        controllers.HomeController.javascriptRoutes
 
@@ -18,6 +18,7 @@ GET         /result                 controllers.HomeController.result
 
 GET         /images                  controllers.ImageController.getImages
 POST        /images                  controllers.ImageController.createImage
+POST        /puzzle                  controllers.HomeController.scorePuzzle
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
