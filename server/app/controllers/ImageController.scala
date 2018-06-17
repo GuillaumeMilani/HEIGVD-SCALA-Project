@@ -54,10 +54,16 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     } yield Ok(views.html.imageManager(images, labels))
   }
 
-  /**
-    * Get the list of all existing students, then return it.
-    * The Action.async is used because the request is asynchronous.
-    */
+  def getPuzzle = Action.async {
+    val futureImages = imageDAO.findRandom(15)
+    val futureLabel = labelDAO.findRandom
+
+    for {
+      images <- futureImages
+      label <- futureLabel
+    } yield Ok(views.html.index("Salut copain", images, label))
+  }
+
   def getImages = Action.async {
     val imagesList = imageDAO.list()
     imagesList map (i => Ok(Json.toJson(i)))

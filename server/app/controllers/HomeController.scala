@@ -19,6 +19,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, labelDAO: LabelDAO, labelHasImageDAO: LabelHasImageDAO) extends AbstractController(cc) {
 
   val title = "Ultimate HEIG-VD Manager 2018"
+  val numberOfImages = 15
 
   def javascriptRoutes = Action { implicit request =>
     Ok(
@@ -29,19 +30,10 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     ).as("text/javascript")
   }
 
-  def index = Action.async {
-    val images = imageDAO.list()
-    images map { images =>
-      Ok(views.html.index("Salut copain", images))
-    }
-  }
-
-
   def result = Action.async {
     val images = labelHasImageDAO.list()
     images map { images =>
       Ok(views.html.resultIndex("Projet Scala - Statistics", images))
-
     }
   }
 
@@ -64,14 +56,17 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     val keyword = json.keyword
     val clicked = json.clicked.map(a => a.toLong)
     val notClicked = json.notClicked.map(a => a.toLong)
-    val images = imageDAO.list()
+    val images = imageDAO.findRandom(numberOfImages)
+    val label = labelDAO.findRandom
 
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
         if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          images map { images =>
-            Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
-          }
+          for {
+            images <- images
+            label <- label
+          } yield Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images, label))
+
         }
       }
     }
@@ -79,9 +74,10 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     for (id <- notClicked) {
       for (image <- imageDAO.findById(id)) {
         if (!image.isEmpty && !image.get.labelId.isEmpty && image.get.labelId.get != keyword) {
-          images map { images =>
-            Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images))
-          }
+          for {
+            images <- images
+            label <- label
+          } yield Ok(views.html.index("Vous avez commis des erreurs dans la classification!. Vous pouvez réessayer.", images, label))
         }
       }
     }
@@ -89,14 +85,14 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
     for (id <- clicked) {
       for (image <- imageDAO.findById(id)) {
         if (!image.isEmpty) {
-          labelHasImageDAO.addAClick(id, keyword);
+          labelHasImageDAO.addAClick(id, keyword)
         }
       }
     }
 
-    images map { images =>
-      Ok(views.html.index("Merci! Vos résultats ont été validés.", images))
-    }
+    for {
+      images <- images
+      label <- label
+    } yield Ok(views.html.index("Merci! Vos résultats ont été validés.", images, label))
   }
-
 }

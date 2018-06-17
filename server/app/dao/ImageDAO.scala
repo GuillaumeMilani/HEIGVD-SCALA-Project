@@ -41,6 +41,11 @@ class ImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     db.run(query.result)
   }
 
+  def findRandom(number: Int): Future[Seq[Image]] = {
+    val rand = SimpleFunction.nullary[Double]("rand")
+    db.run(images.sortBy(_ => rand).take(number).result)
+  }
+
   /** Retrieve a image from the id. */
   def findById(id: Long): Future[Option[Image]] =
     db.run(images.filter(_.id === id).result.headOption)

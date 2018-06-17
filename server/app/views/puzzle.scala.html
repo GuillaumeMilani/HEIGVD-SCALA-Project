@@ -1,4 +1,4 @@
-@(images: Seq[Image])
+@(images: Seq[Image], label: Label)
 
 <style>
         .imageBox {
@@ -18,17 +18,16 @@
         }
 </style>
 
-
 <section>
     <h1>Image puzzle</h1>
     <br>
     <div class="imageBox" id="imageBox">
-        <p> Click on all images that correspond to the keyword <b> KEYWORD </b> </p>
+        <p> Click on all images that correspond to the keyword <b> @label.label </b> </p>
         @for(image <- images) {
             <img src="@routes.Assets.versioned(image.fileName)" alt="Image" id="@image.id" class="notClicked" height="100" width="100" onclick="onImageClick(event)">
             }
-        </div>
-    <input type="submit" value="I have chosen all images. Give me points!" onclick="postPuzzle('KEYWORD')">
+    </div>
+    <input type="submit" value="I have chosen all images. Give me points!" onclick="postPuzzle('@label.label')">
     <br>
     <br>
     <a href="@routes.ImageController.manageImages()">Add images here!</a>
