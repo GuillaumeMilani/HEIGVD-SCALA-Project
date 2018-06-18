@@ -1,4 +1,4 @@
-@(labelHasImages: Seq[LabelHasImage], images: Seq[Image], labels: Seq[Label])
+@(stats: Seq[(String,Long,String,Long)])
 
 <style>
         tfoot input {
@@ -19,29 +19,21 @@
     <table id="example" class="display" style="width: 100%">
         <thead>
             <tr>
-                <th>File name</th>
-                <th>File id</th>
-                <th>Label</th>
-                <th>clicks</th>
+                <th>Fichier</th>
+                <th>ID du fichier</th>
+                <th>Mot-clé</th>
+                <th>Nombre de clics</th>
 
             </tr>
         </thead>
         <tbody>
-            @for(labelHasImage <- labelHasImages) {
-                @for(image <- images) {
-                    @for(label <- labels) {
-                        @if(image.id.get == labelHasImage.imageId && label.id.get == labelHasImage.labelId) {
-                            <tr>
-                                <th>@image.fileName</th>
-                                <th>@image.id</th>
-                                <th>@label.label</th>
-                                <th>@labelHasImage.clicks</th>
-
-                            </tr>
-                        }
-
-                    }
-                }
+            @for(stat <- stats) {
+                <tr>
+                    <th>@stat._1</th>
+                    <th>@stat._2</th>
+                    <th>@stat._3</th>
+                    <th>@stat._4</th>
+                </tr>
             }
         </tbody>
     </table>

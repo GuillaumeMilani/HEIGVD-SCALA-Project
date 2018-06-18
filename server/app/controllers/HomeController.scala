@@ -40,8 +40,14 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
       labels <- futurLabels
       images <- futurImages
 
+      stats = for {
+      labelHasImage <- labelHasImages
+      label <- labels
+      image <- images
+      if (labelHasImage.imageId == image.id.get && labelHasImage.labelId == label.id.get)
+    } yield (image.fileName,labelHasImage.imageId ,label.label, labelHasImage.clicks)
 
-    }yield Ok(views.html.resultIndex("Projet Scala - Statistics", labelHasImages,images,labels))
+    } yield Ok(views.html.resultIndex("Projet Scala - Statistics", stats))
   }
 
   /**
