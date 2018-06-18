@@ -42,6 +42,7 @@ class LabelDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def findById(id: Long): Future[Option[Label]] =
     db.run(labels.filter(_.id === id).result.headOption)
 
+  /** Return a random label if at least one exists in the database */
   def findRandom: Future[Option[Label]] = {
     val rand = SimpleFunction.nullary[Double]("rand")
     db.run(labels.sortBy(_ => rand).result.headOption)
@@ -63,12 +64,14 @@ class LabelDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def delete(id: Long): Future[Int] =
     db.run(labels.filter(_.id === id).delete)
 
+  /** Return a random label if at least one exists in the database */
   def randomLabel(): Future[Option[Label]] = {
     val rand = SimpleFunction.nullary[Double]("rand")
     val query = labels.sortBy(_ => rand)
     db.run(query.result.headOption)
   }
 
+  /** Returns a label from it's keyword. Utility method. */
   def getIdFromKeyword(keyword: String): Future[Option[Label]] = {
     db.run(labels.filter(_.label === keyword).result.headOption)
   }

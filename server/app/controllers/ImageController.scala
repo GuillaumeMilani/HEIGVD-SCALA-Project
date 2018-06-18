@@ -45,6 +45,9 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
+  /**
+    * Allows a user to manage images and labels.
+    */
   def manageImages = Action.async {
     val imagesFuture = imageDAO.list()
     val labelsFuture = labelDAO.list()
@@ -54,6 +57,10 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     } yield Ok(views.html.imageManager(images, labels))
   }
 
+  /**
+    * Redirects to the puzzle page. If there are no labels in the DB, a puzzle
+    * cannot be made and the user is sent to the image manager page instead.
+    */
   def getPuzzle = Action.async {
     val futureImages = imageDAO.findRandom(15)
     val futureLabel = labelDAO.findRandom
@@ -69,6 +76,11 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     imagesList map (i => Ok(Json.toJson(i)))
   }
 
+  /**
+    * Allows the user to post images to the server. Images are stored in the 'public'
+    * folder and their path is added to the database.
+    * @return
+    */
   def postImages = Action(parse.multipartFormData).async { implicit request =>
     val referer = request.headers.get("referer")
 
@@ -94,12 +106,6 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     Future.sequence(futures).map(_ => Redirect(referer.get))
   }
 
-  /**
-    * Parse the POST request, validate the request's body, then create a new student based on the sent JSON payload, and
-    * finally sends back a JSON response.
-    * The action expects a request with a Content-Type header of text/json or application/json and a body containing a
-    * JSON representation of the entity to create.
-    */
   def createImage = Action.async(validateJson[Image]) { implicit request =>
     // `request.body` contains a fully validated `Student` instance, since it has been validated by the `validateJson`
     // helper above.
@@ -118,7 +124,7 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
   }
 
   /**
-    * Get the student identified by the given ID, then return it as JSON.
+    * Get the image identified by the given ID, then return it as JSON.
     */
   def getImage(imageId: Long) = Action.async {
     val optionalImage = imageDAO.findById(imageId)
@@ -134,6 +140,9 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
     }
   }
 
+  /**
+    * Tries to update image based on ID.
+    */
   def updateImage(imageId: Long) = Action.async(validateJson[Image]) { request =>
     val newImage = request.body
 
@@ -153,7 +162,7 @@ class ImageController @Inject()(cc: ControllerComponents, environment: Environme
   }
 
   /**
-    * Try to delete the student identified by the given ID, and sends back a JSON response.
+    * Try to delete the student image by the given ID, and sends back a JSON response.
     */
   def deleteImage(imageId: Long) = Action.async {
     imageDAO.delete(imageId).map {

@@ -62,6 +62,9 @@ class LabelHasImageDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   def delete(id: Long): Future[Int] =
     db.run(labelHasImages.filter(_.id === id).delete)
 
+  /** Updates the labelHasImage table (or inserts into it if no link exists yet) to add a click
+    * to the link between an image and a label based on the given IDs.
+    */
   def addAClick(imageId: Long, labelId: Long): Unit = {
     val labelHasImage: Future[Option[LabelHasImage]] = db.run(labelHasImages.filter(a => a.imageId === imageId && a.labelId === labelId).result.headOption)
     for (lhi <- labelHasImage) {

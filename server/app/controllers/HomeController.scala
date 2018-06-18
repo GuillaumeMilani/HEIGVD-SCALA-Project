@@ -50,6 +50,10 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
       (JsPath \ "keyword").read[Long]
     ) (Puzzle.apply _)
 
+  /**
+    * Receives information on clicked and unclicked images, and a keyword.
+    * Calculates the score and returns it to the user
+    */
   def scorePuzzle = Action.async { implicit request =>
     val json: Puzzle = request.body.asJson.get.validate[Puzzle].get
     val keywordId: Long = json.keyword
