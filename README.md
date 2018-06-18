@@ -3,9 +3,9 @@
 Guillaume Milani, Edward Ransome, Michaël Spierer
 
 ## Description
-This project is part of the SCALA course at HEIG-VD, Yverdon-les-Bains. It consists of a Clicker game, i.e. a game whose goal is to earn as many points as possible mainly by clicking. In order to satisfy the latter, the player has several choices: click in a certain area to gain points, buy point generators with the user's current points which create more every second or buy bonuses to improve the two previous choices. The fourth way is to perform an image classification problem to earn a large point bonus. This will allow an administrator to use the game to collect information about an image set.
+Notre projet de Scala consiste en un jeu en ligne permettant de classifier des images avec des mots-clés. Un administrateur peut ajouter au site une liste d’images pré-classifiées, ainsi qu’une liste d’image non-classifiée.
+Lors du jeu, les joueurs doivent sélectionner, dans une grille d’images, celles qui correspondent au mot clé indiqué. Les images pré-classifiées permettent de contrôler que l’utilisateur ne rentre pas des informations aléatoirement : s’il n’a pas classifié correctement les images connues, il perd des points, sinon il en gagne.
 
-An administrator will have to provide two image sets: a classified image set, with corresponding keywords for each image, and the unclassified set they wish to collect data about. In order to reward users for correctly classifying images, we use the known image set. This discourages users from randomly selecting keywords for the unclassified set, by rewarding them when we know they are correct.
-## Database schema
-
-![UML](UML/uml.png)
+## Déploiement
+Notre projet nécessite une base de données MySQL. Une fois qu’une base est installée et lancée, modifier le fichier conf/application.conf afin de renseigner les informations de connexion à la base de données. 
+Lancer ensuite le projet Play situé dans le dossier server afin de déployer l’application. À la première connexion, Evolutions proposera l’application d’un script SQL créant les tables nécessaires dans le base de données.
