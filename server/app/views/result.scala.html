@@ -1,4 +1,4 @@
-@(images: Seq[LabelHasImage])
+@(labelHasImages: Seq[LabelHasImage],images: Seq[Image],labels: Seq[Label])
 
 <style>
         tfoot input {
@@ -18,24 +18,30 @@
     <table id="example" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>image_id</th>
-                <th>keyword</th>
+                <th>File name</th>
+                <th>Label</th>
                 <th>clicks</th>
             </tr>
         </thead>
         <tbody>
-            @for(image <- images){
-                <tr>
-                    <th>@image.imageId</th>
-                    <th>@image.labelId</th>
-                    <th>@image.clicks</th>
-                </tr>
+            @for(labelHasImage <- labelHasImages){
+                @for(image <- images){
+                    @for(label <- labels){
+                        @if(labelHasImage.imageId == image.id && label.id == labelHasImage.labelId){
+                        <tr>
+                            <th>@image.fileName</th>
+                            <th>@label.label</th>
+                            <th>@labelHasImage.clicks</th>
+                        </tr>
+                        }
+                    }
+                }
             }
         </tbody>
         <tfoot>
             <tr>
-                <th>image_id</th>
-                <th>keyword</th>
+                <th>File name</th>
+                <th>Label</th>
                 <th>clicks</th>
             </tr>
         </tfoot>

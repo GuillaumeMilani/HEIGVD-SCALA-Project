@@ -1,4 +1,4 @@
-@(title: String, images: Seq[LabelHasImage])
+@(title: String, labelHasImages: Seq[LabelHasImage],images: Seq[Image],labels: Seq[Label])
     @main(title) {
-        @result(images)
+        @result(labelHasImages,images,labels)
     }

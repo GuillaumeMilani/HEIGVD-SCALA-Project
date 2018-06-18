@@ -31,10 +31,15 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
   }
 
   def result = Action.async {
-    val images = labelHasImageDAO.list()
-    images map { images =>
-      Ok(views.html.resultIndex("Projet Scala - Statistics", images))
-    }
+    val futurLabelHasImages = labelHasImageDAO.list()
+    val futurLabels = labelDAO.list()
+    val futurImages = imageDAO.list()
+
+    for {
+      labelHasImages <- futurLabelHasImages
+      labels <- futurLabels
+      images <- futurImages
+    }yield Ok(views.html.resultIndex("Projet Scala - Statistics", labelHasImages,images,labels))
   }
 
   /**
