@@ -1,4 +1,4 @@
-# HEIG-VD SCALA Project: Clicker
+# HEIG-VD SCALA Project: Image labeler
 
 Guillaume Milani, Edward Ransome, Michaël Spierer
 
