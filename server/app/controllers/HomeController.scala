@@ -39,6 +39,8 @@ class HomeController @Inject()(cc: ControllerComponents, imageDAO: ImageDAO, lab
       labelHasImages <- futurLabelHasImages
       labels <- futurLabels
       images <- futurImages
+
+
     }yield Ok(views.html.resultIndex("Projet Scala - Statistics", labelHasImages,images,labels))
   }
 

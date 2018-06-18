@@ -1,4 +1,4 @@
-@(labelHasImages: Seq[LabelHasImage],images: Seq[Image],labels: Seq[Label])
+@(labelHasImages: Seq[LabelHasImage], images: Seq[Image], labels: Seq[Label])
 
 <style>
         tfoot input {
@@ -6,6 +6,7 @@
             padding: 3px;
             box-sizing: border-box;
         }
+
         tfoot {
             display: table-header-group;
         }
@@ -15,36 +16,34 @@
 <section>
     <h1>Statistics</h1>
 
-    <table id="example" class="display" style="width:100%">
+    <table id="example" class="display" style="width: 100%">
         <thead>
             <tr>
                 <th>File name</th>
+                <th>File id</th>
                 <th>Label</th>
                 <th>clicks</th>
+
             </tr>
         </thead>
         <tbody>
-            @for(labelHasImage <- labelHasImages){
-                @for(image <- images){
-                    @for(label <- labels){
-                        @if(labelHasImage.imageId == image.id && label.id == labelHasImage.labelId){
-                        <tr>
-                            <th>@image.fileName</th>
-                            <th>@label.label</th>
-                            <th>@labelHasImage.clicks</th>
-                        </tr>
+            @for(labelHasImage <- labelHasImages) {
+                @for(image <- images) {
+                    @for(label <- labels) {
+                        @if(image.id.get == labelHasImage.imageId && label.id.get == labelHasImage.labelId) {
+                            <tr>
+                                <th>@image.fileName</th>
+                                <th>@image.id</th>
+                                <th>@label.label</th>
+                                <th>@labelHasImage.clicks</th>
+
+                            </tr>
                         }
+
                     }
                 }
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <th>File name</th>
-                <th>Label</th>
-                <th>clicks</th>
-            </tr>
-        </tfoot>
     </table>
 
 </section>
